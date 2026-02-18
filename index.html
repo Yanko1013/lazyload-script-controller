@@ -10,53 +10,10 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css">
   <link rel="stylesheet" href="./styles/main.css">
+  <link rel="stylesheet" href="./styles/temp.css" class="temp">
 
-  <!-- lazyload top -->
-  <script>
-    const blockLoading = [
-      'jquery-3.7.1.min.js',
-      'slick.min.js',
-      'klaviyo.js',
-      'app.js'
-    ];
-
-    const blockExec = [
-      '.slick-carousel',
-      'new Swiper'
-    ];
-
-    const shouldBlock = (node) => {
-      if (node.src) {
-        return blockLoading.some(k => node.src.includes(k));
-      }
-      return blockExec.some(k => node.textContent.includes(k));
-    };
-
-    const setLazy = (node) => {
-      node.dataset.type = node.type || 'text/javascript';
-      node.type = 'text/lazyload';
-
-      if (node.src) {
-        node.dataset.src = node.src;
-        node.removeAttribute('src');
-      }
-    };
-
-    const scopeObserver = new MutationObserver(mutations => {
-      for (const { addedNodes } of mutations) {
-        for (const node of addedNodes) {
-          if (node.nodeType !== 1 || node.tagName !== 'SCRIPT') continue;
-          if (!shouldBlock(node)) continue;
-          setLazy(node);
-        }
-      }
-    });
-
-    scopeObserver.observe(document.documentElement, {
-      childList: true,
-      subtree: true
-    });
-  </script>
+  <!-- Lazyload Script Interceptor -->
+  <script src="./controller/interceptor.js"></script>
 </head>
 
 <body>
@@ -110,27 +67,21 @@
 
   <!-- Slick -->
   <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
-
-  <!-- Slick initialization -->
   <script>
-    $(document).ready(function () {
-      $('.slick-carousel').slick({
-        dots: true,
-        infinite: true,
-        speed: 500,
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        autoplay: true,
-        autoplaySpeed: 3000,
-        arrows: true
-      });
+    $('.slick-carousel').slick({
+      dots: true,
+      infinite: true,
+      speed: 500,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      autoplay: true,
+      autoplaySpeed: 3000,
+      arrows: true
     });
   </script>
 
-  <!-- Swiper JS -->
+  <!-- Swiper -->
   <script data-src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" type="text/lazyload" defer></script>
-
-  <!-- Swiper initialization -->
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const swiper = new Swiper('.mySwiper', {
@@ -150,97 +101,23 @@
       });
     });
   </script>
+  <script type="text/lazyload">
+    window.onload = () => {
+      console.log('window onload');
+    }
+    window.addEventListener('load', () => {
+      console.log('window load');
+    });
+    window.addEventListener('DOMContentLoaded', () => {
+      console.log('window DOMContentLoaded');
+    });
+  </script>
 
   <!-- ES Module script -->
   <script type="module" src="./js/app.js"></script>
 
-  <!-- lazyload bottom -->
-  <script>
-    const events = ['scroll', 'mousemove', 'keydown', 'click', 'touchstart'];
-    let flag = false;
-
-    function lazyload() {
-      if (flag) return;
-      flag = true;
-
-      if (scopeObserver) {
-        scopeObserver.disconnect();
-      }
-
-      const lazyScripts = document.querySelectorAll("script[type='text/lazyload']");
-      let currentIndex = 0;
-
-      function loadNextScript() {
-        if (currentIndex >= lazyScripts.length) return;
-
-        const originalScript = lazyScripts[currentIndex];
-        const newScript = document.createElement('script');
-
-        const originalDocAddEventListener = document.addEventListener.bind(document);
-        document.addEventListener = function (type, listener, options) {
-          if (type === 'DOMContentLoaded') {
-            if (document.readyState === 'complete' || document.readyState === 'interactive') {
-              setTimeout(() => listener.call(this, new Event('DOMContentLoaded')), 0);
-            } else {
-              originalDocAddEventListener(type, listener, options);
-            }
-          } else {
-            originalDocAddEventListener(type, listener, options);
-          }
-        };
-
-        const restoreAndContinue = () => {
-          document.addEventListener = originalDocAddEventListener;
-          currentIndex++;
-          loadNextScript();
-        };
-
-        if (originalScript.dataset.src) {
-          newScript.src = originalScript.dataset.src;
-        }
-
-        for (const attr of originalScript.attributes) {
-          if (attr.name !== 'type' && attr.name !== 'data-src') {
-            newScript.setAttribute(attr.name, attr.value);
-          }
-        }
-
-        newScript.type = originalScript.dataset.type || 'text/javascript';
-
-        if (originalScript.textContent.trim()) {
-          newScript.textContent = originalScript.textContent;
-        }
-
-        if (originalScript.dataset.src) {
-          newScript.onload = () => {
-            restoreAndContinue();
-          };
-          newScript.onerror = () => {
-            restoreAndContinue();
-          };
-        } else {
-          setTimeout(restoreAndContinue, 0);
-        }
-
-        originalScript.parentNode.replaceChild(newScript, originalScript);
-      }
-
-      loadNextScript();
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      events.forEach(function (eventType) {
-        window.addEventListener(eventType, lazyload, {
-          passive: true,
-          once: true
-        });
-      });
-    });
-
-    setTimeout(() => {
-      lazyload();
-    }, 1000 * 5);
-  </script>
+  <!-- Lazyload Script Trigger -->
+  <script src="./controller/trigger.js"></script>
 </body>
 
 </html>
