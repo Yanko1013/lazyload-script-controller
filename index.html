@@ -10,10 +10,11 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css">
   <link rel="stylesheet" href="./styles/main.css">
-  <link rel="stylesheet" href="./styles/temp.css" class="temp">
+  <link rel="stylesheet" href="./styles/temp.css" class="temp-style">
 
   <!-- Lazyload Params -->
   <script>
+    // u can also use array of strings instead of regex
     const blockLoading = [
       /jquery-3\.7\.1\.min\.js/,
       /slick\.min\.js/,
@@ -27,6 +28,16 @@
     ];
 
     const maxDelayBeforeLazyloadMs = 5000;
+
+    const interactions = [
+      'pointerdown',
+      'scroll',
+      'wheel',
+      'keydown',
+      'mousemove'
+    ];
+
+    let loadFlag = false;
   </script>
   
   <!-- Lazyload Script Interceptor -->

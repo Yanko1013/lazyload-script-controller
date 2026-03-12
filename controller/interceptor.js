@@ -15,7 +15,7 @@ Object.defineProperty(window, 'onload', {
 
 
 const matchesAny = (patterns, value) => {
-  if (!Array.isArray(patterns)) return false;
+  if (!Array.isArray(patterns) || !value) return false;
   return patterns.some((pattern) => {
     if (pattern instanceof RegExp) return pattern.test(value);
     if (typeof pattern === 'string') return value.includes(pattern);
@@ -23,20 +23,29 @@ const matchesAny = (patterns, value) => {
   });
 };
 
+const getBlockLoading = () =>
+  (typeof blockLoading !== 'undefined' && Array.isArray(blockLoading)) ? blockLoading : [];
+
+const getBlockExec = () =>
+  (typeof blockExec !== 'undefined' && Array.isArray(blockExec)) ? blockExec : [];
+
 const shouldBlock = (node) => {
-  if (node.src) {
-    return matchesAny(blockLoading, node.src);
+  const src = node.getAttribute('src');
+  if (src) {
+    return matchesAny(getBlockLoading(), src);
   }
   const text = node.textContent || '';
-  return matchesAny(blockExec, text);
+  return matchesAny(getBlockExec(), text);
 };
 
 const setLazy = (node) => {
+  if (node.type === 'text/lazyload') return;
   node.dataset.type = node.type || 'text/javascript';
   node.type = 'text/lazyload';
 
-  if (node.src) {
-    node.dataset.src = node.src;
+  const src = node.getAttribute('src');
+  if (src) {
+    node.dataset.src = src;
     node.removeAttribute('src');
   }
 };
@@ -44,7 +53,7 @@ const setLazy = (node) => {
 const scopeObserver = new MutationObserver(mutations => {
   for (const { addedNodes } of mutations) {
     for (const node of addedNodes) {
-      if (node.nodeType !== 1 || node.tagName !== 'SCRIPT') continue;
+      if (node.nodeType !== Node.ELEMENT_NODE || node.tagName !== 'SCRIPT') continue;
       if (!shouldBlock(node)) continue;
       setLazy(node);
     }
