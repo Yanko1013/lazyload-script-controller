@@ -50,9 +50,17 @@ function lazyload() {
         } else {
           originalDocAddEventListener(type, listener, options);
         }
-      } else {
-        originalDocAddEventListener(type, listener, options);
+        return;
       }
+      if (type === 'readystatechange') {
+        if (document.readyState === 'interactive' || document.readyState === 'complete') {
+          setTimeout(() => listener.call(this, new Event('readystatechange')), 0);
+        } else {
+          originalDocAddEventListener(type, listener, options);
+        }
+        return;
+      }
+      originalDocAddEventListener(type, listener, options);
     };
 
     const originalWinAddEventListener = window.addEventListener.bind(window);
@@ -64,15 +72,31 @@ function lazyload() {
         } else {
           originalWinAddEventListener(type, listener, options);
         }
-      } else if(type === 'DOMContentLoaded') {
+        return;
+      }
+      if (type === 'DOMContentLoaded') {
         if (document.readyState === 'complete' || document.readyState === 'interactive') {
           setTimeout(() => listener.call(window, new Event('DOMContentLoaded')), 0);
         } else {
           originalWinAddEventListener(type, listener, options);
         }
-      } else {
-        originalWinAddEventListener(type, listener, options);
+        return;
       }
+      if (type === 'pageshow') {
+        if (document.readyState === 'complete') {
+          setTimeout(() => {
+            if (typeof PageTransitionEvent === 'function') {
+              listener.call(window, new PageTransitionEvent('pageshow', { persisted: false }));
+            } else {
+              listener.call(window, new Event('pageshow'));
+            }
+          }, 0);
+        } else {
+          originalWinAddEventListener(type, listener, options);
+        }
+        return;
+      }
+      originalWinAddEventListener(type, listener, options);
     };
 
 
