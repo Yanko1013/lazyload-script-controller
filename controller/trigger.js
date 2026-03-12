@@ -43,61 +43,67 @@ function lazyload() {
     const newScript = document.createElement('script');
 
     const originalDocAddEventListener = document.addEventListener.bind(document);
-    document.addEventListener = function (type, listener, options) {
-      if (type === 'DOMContentLoaded') {
-        if (document.readyState === 'complete' || document.readyState === 'interactive') {
-          setTimeout(() => listener.call(this, new Event('DOMContentLoaded')), 0);
-        } else {
-          originalDocAddEventListener(type, listener, options);
-        }
-        return;
-      }
-      if (type === 'readystatechange') {
-        if (document.readyState === 'interactive' || document.readyState === 'complete') {
-          setTimeout(() => listener.call(this, new Event('readystatechange')), 0);
-        } else {
-          originalDocAddEventListener(type, listener, options);
-        }
-        return;
-      }
-      originalDocAddEventListener(type, listener, options);
-    };
-
     const originalWinAddEventListener = window.addEventListener.bind(window);
 
-    window.addEventListener = function (type, listener, options) {
-      if (type === 'load') {
-        if (document.readyState === 'complete') {
-          setTimeout(() => listener.call(window, new Event('load')), 0);
-        } else {
-          originalWinAddEventListener(type, listener, options);
-        }
-        return;
+    const scheduleCall = (fn) => setTimeout(fn, 0);
+    const readyState = () => document.readyState;
+
+    const documentRules = {
+      DOMContentLoaded: {
+        shouldFire: () => readyState() === 'interactive' || readyState() === 'complete',
+        createEvent: () => new Event('DOMContentLoaded')
+      },
+      readystatechange: {
+        shouldFire: () => readyState() === 'interactive' || readyState() === 'complete',
+        createEvent: () => new Event('readystatechange')
       }
-      if (type === 'DOMContentLoaded') {
-        if (document.readyState === 'complete' || document.readyState === 'interactive') {
-          setTimeout(() => listener.call(window, new Event('DOMContentLoaded')), 0);
-        } else {
-          originalWinAddEventListener(type, listener, options);
-        }
-        return;
-      }
-      if (type === 'pageshow') {
-        if (document.readyState === 'complete') {
-          setTimeout(() => {
-            if (typeof PageTransitionEvent === 'function') {
-              listener.call(window, new PageTransitionEvent('pageshow', { persisted: false }));
-            } else {
-              listener.call(window, new Event('pageshow'));
-            }
-          }, 0);
-        } else {
-          originalWinAddEventListener(type, listener, options);
-        }
-        return;
-      }
-      originalWinAddEventListener(type, listener, options);
     };
+
+    const windowRules = {
+      load: {
+        shouldFire: () => readyState() === 'complete',
+        createEvent: () => new Event('load')
+      },
+      DOMContentLoaded: {
+        shouldFire: () => readyState() === 'interactive' || readyState() === 'complete',
+        createEvent: () => new Event('DOMContentLoaded')
+      },
+      pageshow: {
+        shouldFire: () => readyState() === 'complete',
+        createEvent: () => {
+          if (typeof PageTransitionEvent === 'function') {
+            return new PageTransitionEvent('pageshow', { persisted: false });
+          }
+          return new Event('pageshow');
+        }
+      }
+    };
+
+    function createPatchedAddEventListener(target, original, rules) {
+      return function (type, listener, options) {
+        const rule = rules[type];
+        if (!rule) {
+          original(type, listener, options);
+          return;
+        }
+        if (rule.shouldFire()) {
+          scheduleCall(() => listener.call(target, rule.createEvent()));
+        } else {
+          original(type, listener, options);
+        }
+      };
+    }
+
+    document.addEventListener = createPatchedAddEventListener(
+      document,
+      originalDocAddEventListener,
+      documentRules
+    );
+    window.addEventListener = createPatchedAddEventListener(
+      window,
+      originalWinAddEventListener,
+      windowRules
+    );
 
 
     if (originalScript.dataset.src) {
