@@ -14,11 +14,21 @@ Object.defineProperty(window, 'onload', {
 });
 
 
+const matchesAny = (patterns, value) => {
+  if (!Array.isArray(patterns)) return false;
+  return patterns.some((pattern) => {
+    if (pattern instanceof RegExp) return pattern.test(value);
+    if (typeof pattern === 'string') return value.includes(pattern);
+    return false;
+  });
+};
+
 const shouldBlock = (node) => {
   if (node.src) {
-    return blockLoading.some(k => node.src.includes(k));
+    return matchesAny(blockLoading, node.src);
   }
-  return blockExec.some(k => node.textContent.includes(k));
+  const text = node.textContent || '';
+  return matchesAny(blockExec, text);
 };
 
 const setLazy = (node) => {
