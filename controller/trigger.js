@@ -152,4 +152,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 setTimeout(() => {
   lazyload();
-}, setTimeoutTiming);
+}, maxDelayBeforeLazyloadMs);
