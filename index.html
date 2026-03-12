@@ -12,6 +12,23 @@
   <link rel="stylesheet" href="./styles/main.css">
   <link rel="stylesheet" href="./styles/temp.css" class="temp">
 
+  <!-- Lazyload Params -->
+  <script>
+    const blockLoading = [
+      'jquery-3.7.1.min.js',
+      'slick.min.js',
+      'klaviyo.js',
+      'js/app.js'
+    ];
+
+    const blockExec = [
+      '.slick-carousel',
+      'new Swiper'
+    ];
+
+    const setTimeoutTiming = 5000;
+  </script>
+  
   <!-- Lazyload Script Interceptor -->
   <script src="./controller/interceptor.js"></script>
 </head>
@@ -112,7 +129,16 @@
       console.log('window DOMContentLoaded');
     });
   </script>
-
+  <script>
+    // pageshow
+    window.addEventListener('pageshow', () => {
+      console.log('window pageshow');
+    });
+    // readystatechange
+    document.addEventListener('readystatechange', () => {
+      console.log('document readystatechange');
+    });
+  </script>
   <!-- ES Module script -->
   <script type="module" src="./js/app.js"></script>
 

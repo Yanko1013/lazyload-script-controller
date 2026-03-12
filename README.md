@@ -11,7 +11,6 @@ TODO:
 
 - document.addEventListener('readystatechange', ...)
 - window.addEventListener('pageshow', ...)
-- document.addEventListener('visibilitychange', ...)
 
 6.代码美化
 

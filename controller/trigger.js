@@ -126,6 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// setTimeout(() => {
-//   lazyload();
-// }, 1000 * 5);
+setTimeout(() => {
+  lazyload();
+}, setTimeoutTiming);

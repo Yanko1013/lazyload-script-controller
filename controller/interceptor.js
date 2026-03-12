@@ -1,15 +1,3 @@
-const blockLoading = [
-  'jquery-3.7.1.min.js',
-  'slick.min.js',
-  'klaviyo.js',
-  'js/app.js'
-];
-
-const blockExec = [
-  '.slick-carousel',
-  'new Swiper'
-];
-
 let originalOnload = window.onload;
 
 Object.defineProperty(window, 'onload', {
