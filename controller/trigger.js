@@ -97,7 +97,7 @@ function lazyload() {
   let currentIndex = 0;
 
   function removeTempStyles() {
-    document.querySelectorAll('.temp-style').forEach(i => {
+    document.querySelectorAll('[data-temp-style]').forEach(i => {
       setTimeout(() => i.remove(), 1000);
     });
   }
@@ -141,4 +141,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 setTimeout(() => {
   lazyload();
-}, maxDelayBeforeLazyloadMs);
+}, MAX_DELAY_TIME);

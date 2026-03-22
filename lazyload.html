@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lazyload Script Controller</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css">
+  <link rel="stylesheet" href="./style/main.css">
+  <link rel="stylesheet" href="./style/temp.css" data-temp-style>
+
+  <!-- Lazyload Params -->
+  <script>
+    // u can also use array of strings instead of regex
+    const blockLoading = [
+      /jquery-3\.7\.1\.min\.js/,
+      /slick\.min\.js/,
+      /klaviyo\.js/,
+      /\/js\/app\.js/
+    ];
+
+    const blockExec = [
+      /\.slick-carousel/,
+      /new\s+Swiper/
+    ];
+
+    const MAX_DELAY_TIME = 5000;
+
+    const interactions = [
+      'pointerdown',
+      'scroll',
+      'wheel',
+      'keydown',
+      'mousemove'
+    ];
+
+    let loadFlag = false;
+  </script>
+  
+  <!-- Lazyload Script Interceptor -->
+  <script src="./controller/interceptor.js"></script>
+</head>
+
+<body>
+
+  <!-- Swiper Section -->
+  <div class="section">
+    <h2>🎯 Swiper Carousel</h2>
+    <div class="swiper mySwiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide swiper-slide-1">Swiper Slide 1</div>
+        <div class="swiper-slide swiper-slide-2">Swiper Slide 2</div>
+        <div class="swiper-slide swiper-slide-3">Swiper Slide 3</div>
+        <div class="swiper-slide swiper-slide-4">Swiper Slide 4</div>
+      </div>
+      <div class="swiper-pagination"></div>
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+    </div>
+  </div>
+
+  <!-- Slick Section -->
+  <div class="section">
+    <h2>🎨 Slick Carousel</h2>
+    <div class="slick-carousel">
+      <div>
+        <div class="slick-item slick-item-1">Slick Slide 1</div>
+      </div>
+      <div>
+        <div class="slick-item slick-item-2">Slick Slide 2</div>
+      </div>
+      <div>
+        <div class="slick-item slick-item-3">Slick Slide 3</div>
+      </div>
+      <div>
+        <div class="slick-item slick-item-4">Slick Slide 4</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ES Module Section -->
+  <div class="section">
+    <h2>📦 ES Module Demo</h2>
+    <div class="module-output">
+      <h3>Module Output:</h3>
+      <div id="module-result"></div>
+    </div>
+  </div>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+  <!-- Slick -->
+  <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+  <script>
+    $('.slick-carousel').slick({
+      dots: true,
+      infinite: true,
+      speed: 500,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      autoplay: true,
+      autoplaySpeed: 3000,
+      arrows: true
+    });
+  </script>
+
+  <!-- Swiper -->
+  <script data-src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" type="text/lazyload" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const swiper = new Swiper('.mySwiper', {
+        loop: true,
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true,
+        },
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+        autoplay: {
+          delay: 3000,
+          disableOnInteraction: false,
+        },
+      });
+    });
+  </script>
+  <script type="text/lazyload">
+    window.onload = () => {
+      console.log('window onload');
+    }
+    window.addEventListener('load', () => {
+      console.log('window load');
+    });
+    window.addEventListener('DOMContentLoaded', () => {
+      console.log('window DOMContentLoaded');
+    });
+  </script>
+  <script type="text/lazyload">
+    // pageshow
+    window.addEventListener('pageshow', () => {
+      console.log('window pageshow');
+    });
+    // readystatechange
+    document.addEventListener('readystatechange', () => {
+      console.log('document readystatechange');
+    });
+  </script>
+  <!-- ES Module script -->
+  <script type="module" src="./js/app.js"></script>
+
+  <!-- Lazyload Script Trigger -->
+  <script src="./controller/trigger.js"></script>
+</body>
+
+</html>
