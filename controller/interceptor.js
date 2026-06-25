@@ -23,19 +23,19 @@ const matchesAny = (patterns, value) => {
   });
 };
 
-const getBlockLoading = () =>
-  (typeof blockLoading !== 'undefined' && Array.isArray(blockLoading)) ? blockLoading : [];
+const getBlockSrc = () =>
+  (typeof blockSrc !== 'undefined' && Array.isArray(blockSrc)) ? blockSrc : [];
 
-const getBlockExec = () =>
-  (typeof blockExec !== 'undefined' && Array.isArray(blockExec)) ? blockExec : [];
+const getBlockInline = () =>
+  (typeof blockInline !== 'undefined' && Array.isArray(blockInline)) ? blockInline : [];
 
 const shouldBlock = (node) => {
   const src = node.getAttribute('src');
   if (src) {
-    return matchesAny(getBlockLoading(), src);
+    return matchesAny(getBlockSrc(), src);
   }
   const text = node.textContent || '';
-  return matchesAny(getBlockExec(), text);
+  return matchesAny(getBlockInline(), text);
 };
 
 const setLazy = (node) => {

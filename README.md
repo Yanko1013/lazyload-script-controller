@@ -8,14 +8,14 @@ Customize the script loading & Optimize Web performance(TBT, LCP, FCP etc.)
 
     ```html
     <script>
-      const blockLoading = [
+      const blockSrc = [
         /jquery-3\.7\.1\.min\.js/,
         /slick\.min\.js/,
         /klaviyo\.js/,
         /\/js\/app\.js/
       ];
 
-      const blockExec = [
+      const blockInline = [
         /\.slick-carousel/,
         /new\s+Swiper/
       ];
@@ -39,8 +39,8 @@ Customize the script loading & Optimize Web performance(TBT, LCP, FCP etc.)
 
 4. Scripts to be intercepted:
 
-    - External scripts: lazy-loaded when `src` matches any rule in `blockLoading`.
-    - Inline scripts: lazy-loaded when content matches any rule in `blockExec`.
+    - External scripts: lazy-loaded when `src` matches any rule in `blockSrc`.
+    - Inline scripts: lazy-loaded when content matches any rule in `blockInline`.
 
 5. Lazy-load trigger timing:
 
@@ -67,5 +67,5 @@ Customize the script loading & Optimize Web performance(TBT, LCP, FCP etc.)
 ## Notes
 
 1. Understand the code and functionality of the scripts you want to lazy-load.
-2. `blockLoading` / `blockExec` must be defined before `interceptor.js`.
+2. `blockSrc` / `blockInline` must be defined before `interceptor.js`.
 3. Lazy-loading changes event timing; as needed, `DOMContentLoaded/readystatechange/load/pageshow` are re-dispatched.

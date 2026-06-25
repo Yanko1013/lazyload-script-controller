@@ -8,14 +8,14 @@
 
     ```html
     <script>
-      const blockLoading = [
+      const blockSrc = [
         /jquery-3\.7\.1\.min\.js/,
         /slick\.min\.js/,
         /klaviyo\.js/,
         /\/js\/app\.js/
       ];
 
-      const blockExec = [
+      const blockInline = [
         /\.slick-carousel/,
         /new\s+Swiper/
       ];
@@ -39,8 +39,8 @@
 
 4. 需要被拦截的脚本：
 
-    - 外链脚本：`src` 匹配 `blockLoading` 任一规则时会被转成懒加载。
-    - 内联脚本：内容匹配 `blockExec` 任一规则时会被转成懒加载。
+    - 外链脚本：`src` 匹配 `blockSrc` 任一规则时会被转成懒加载。
+    - 内联脚本：内容匹配 `blockInline` 任一规则时会被转成懒加载。
 
 5. 懒加载触发时机：
 
@@ -67,5 +67,5 @@
 ## 注意事项
 
 1. 了解你要懒加载的脚本代码、功能。
-2. `blockLoading` / `blockExec` 需要在 `interceptor.js` 之前定义。
+2. `blockSrc` / `blockInline` 需要在 `interceptor.js` 之前定义。
 3. 懒加载会改变事件触发时机，根据情况补发 `DOMContentLoaded/readystatechange/load/pageshow`。
